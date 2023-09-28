@@ -43,7 +43,7 @@ public class AuditLogAspect {
         String uri = request.getRequestURI();
         String queryString = request.getQueryString();
         String contentType = request.getContentType();
-        BufferedReader reader = request.getReader();
+//        BufferedReader reader = request.getReader();
        // String requestContent = extractRequestContent(contentType, reader);
         
 
@@ -82,24 +82,24 @@ public class AuditLogAspect {
         // This implementation depends on your specific database and application logic
         return auditLogRepository.findTopByOrderByTimestampDesc();
     }
-    private String extractRequestContent(String contentType,  BufferedReader reader) throws IOException {
+//    private String extractRequestContent(String contentType,  BufferedReader reader) throws IOException {
         // Extract and serialize request parameters, body, or other relevant data
         // You can implement this method based on your requirements
         // For example, you can read the request body as a string
         // For multipart/form-data, you may need to handle it differently
-    	if(contentType != null && contentType.contains("application/json")) {
-    		StringBuilder content = new StringBuilder();
-    	    String line;
-    	    while((line = reader.readLine())!=null) {
-    	    	content.append(line);
-    	    }
-
-    	}
-    	if(contentType != null)
-        return contentType.toString();
-    	else 
-    		return null;
-    }
+//    	if(contentType != null && contentType.contains("application/json")) {
+//    		StringBuilder content = new StringBuilder();
+//    	    String line;
+//    	    while((line = reader.readLine())!=null) {
+//    	    	content.append(line);
+//    	    }
+//
+//    	}
+//    	if(contentType != null)
+//        return contentType.toString();
+//    	else 
+//    		return null;
+//    }
 
     // Define a class to represent request logs
     private static class RequestLog {

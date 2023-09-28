@@ -1,6 +1,7 @@
 package com.loc.Locator.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.loc.Locator.BusinessLogic.LocatorBusiness;
 import com.loc.Locator.Entity.UserLocation;
+import com.loc.Locator.Entity.UserTypeEntity;
 import com.loc.Locator.Response.UserByLocationResponse;
+import com.loc.Locator.Response.UserTypeResponseModel;
 
 @RestController
 @RequestMapping(value = "location")
@@ -49,5 +52,19 @@ public class LocationController {
 	@GetMapping(value = "/rest-check") 
 	public String getRestData() {
 		 return locatorBusiness.getRestData();
+	}
+	
+	@PostMapping(value = "/get-user-by-diet") 
+	public UserTypeResponseModel getUserByDiet(@RequestBody Map<String, String> diet) {
+		
+		UserTypeResponseModel response = locatorBusiness.getUserByDiet(diet);
+		return response;
+	}
+	
+	@PostMapping(value = "/add-user-by-diet") 
+	public UserTypeEntity addUserByDiet(@RequestBody UserTypeEntity userType) {
+		
+		UserTypeEntity response = locatorBusiness.addUserByDiet(userType);
+		return response;
 	}
 }

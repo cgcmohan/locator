@@ -3,13 +3,17 @@ package com.loc.Locator.BusinessLogic;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.loc.Locator.Entity.UserLocation;
+import com.loc.Locator.Entity.UserTypeEntity;
+import com.loc.Locator.MiscPojo.UserType;
 import com.loc.Locator.Response.UserByLocationResponse;
+import com.loc.Locator.Response.UserTypeResponseModel;
 import com.loc.Locator.Service.LocatorService;
 import com.loc.Locator.Utility.LocatorUtil;
 
@@ -48,5 +52,31 @@ public class LocatorBusiness {
 	public String getRestData() {
 		
 		return locatorService.getRestData();
+	}
+
+	public UserTypeEntity addUserByDiet(UserTypeEntity userType) {
+		UserTypeEntity status = locatorService.addUserByDiet(userType);
+		return status;
+		
+	}
+
+	public UserTypeResponseModel getUserByDiet(Map<String, String> diet) {
+		UserTypeResponseModel response = new UserTypeResponseModel();
+		String dietType = diet.get("dietType");
+		List<UserTypeEntity> userTypeList = locatorService.getUserByDiet(dietType);
+		
+		List<UserType> userTypeByDietList = new ArrayList<>();
+		
+		userTypeList.forEach(action-> {
+			UserType userType = new UserType();
+			userType.setDietType(action.getDietType());
+			userType.setFullName(action.getFullName());
+			userType.setUserId(action.getUserId());
+			userTypeByDietList.add(userType);
+		});
+		
+		response.setUserTypeResponseList(userTypeByDietList);
+		
+		return response;
 	}
 }
