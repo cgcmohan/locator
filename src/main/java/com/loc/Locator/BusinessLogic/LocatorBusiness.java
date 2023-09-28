@@ -44,4 +44,9 @@ public class LocatorBusiness {
 		boolean status = locatorService.addUserLocation(userLocation);
 		return true;
 	}
+
+	public String getRestData() {
+		
+		return locatorService.getRestData();
+	}
 }

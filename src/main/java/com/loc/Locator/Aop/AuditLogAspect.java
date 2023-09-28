@@ -1,11 +1,14 @@
 package com.loc.Locator.Aop;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,16 +31,24 @@ public class AuditLogAspect {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Before("execution(* com.loc.Locator.controller.LocationController.*(..))")
-    public void logRequest(JoinPoint joinPoint) throws JsonProcessingException {
+    @Pointcut("execution(* com.loc.Locator.controller.LocationController.*(..))")
+    public void requestLogger() {
+    	
+    }
+    
+    @Before("requestLogger()")
+    public void logRequest(JoinPoint joinPoint) throws IOException {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String method = request.getMethod();
         String uri = request.getRequestURI();
         String queryString = request.getQueryString();
-        String requestContent = extractRequestContent(request);
+        String contentType = request.getContentType();
+        BufferedReader reader = request.getReader();
+       // String requestContent = extractRequestContent(contentType, reader);
+        
 
         // Serialize request data as JSON
-        String requestJson = objectMapper.writeValueAsString(new RequestLog(method, uri, queryString, requestContent));
+        String requestJson = objectMapper.writeValueAsString(new RequestLog(method, uri, queryString, "Mohan"));
 
      // Create an audit log entry and save it to the database
         AuditLog logEntry = new AuditLog();
@@ -49,7 +60,7 @@ public class AuditLogAspect {
         auditLogRepository.save(logEntry);
     }
 
-    @AfterReturning(pointcut = "execution(* com.loc.Locator.controller.LocationController.*(..)))",
+    @AfterReturning(pointcut = "requestLogger()",
                     returning = "response")
     public void logResponse(JoinPoint joinPoint, Object response) throws JsonProcessingException {
         // Serialize response data as JSON
@@ -71,12 +82,23 @@ public class AuditLogAspect {
         // This implementation depends on your specific database and application logic
         return auditLogRepository.findTopByOrderByTimestampDesc();
     }
-    private String extractRequestContent(HttpServletRequest request) {
+    private String extractRequestContent(String contentType,  BufferedReader reader) throws IOException {
         // Extract and serialize request parameters, body, or other relevant data
         // You can implement this method based on your requirements
         // For example, you can read the request body as a string
         // For multipart/form-data, you may need to handle it differently
-        return "Request content here";
+    	if(contentType != null && contentType.contains("application/json")) {
+    		StringBuilder content = new StringBuilder();
+    	    String line;
+    	    while((line = reader.readLine())!=null) {
+    	    	content.append(line);
+    	    }
+
+    	}
+    	if(contentType != null)
+        return contentType.toString();
+    	else 
+    		return null;
     }
 
     // Define a class to represent request logs

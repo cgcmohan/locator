@@ -46,4 +46,8 @@ public class LocationController {
 		boolean status = locatorBusiness.addUserLocation(userLocation);
 		return true;
 	}
+	@GetMapping(value = "/rest-check") 
+	public String getRestData() {
+		 return locatorBusiness.getRestData();
+	}
 }
